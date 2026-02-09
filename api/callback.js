@@ -35,3 +35,4 @@ export default async function handler(req, res) {
     res.status(500).json({ error: "Server crash", details: err.message });
   }
 }
+console.log("Redirect URI:", process.env.DISCORD_REDIRECT_URI);
