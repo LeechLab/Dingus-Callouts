@@ -9,13 +9,13 @@ img {
 }
 @font-face {
   font-family: "RubikSprayPaint";
-  src: url(fonts/RubikSprayPaint-Regular.ttf);
+  src: url(fonts/hippo.woff);
 }
 #volumeSlider {
   z-index: 200;
   accent-color: #5f5548;
   position: fixed;
-  top: 1px;
+  top: 2px;
   cursor: pointer;
 }
 .volume {
@@ -23,6 +23,7 @@ img {
   position: fixed;
   left: 10px;
   cursor: pointer;
+  top: 5px;
 }
 html,
 body {
@@ -37,6 +38,16 @@ body {
     2px -2px 0 hsl(30, 12%, 10%),
     -2px 2px 0 hsl(30, 12%, 10%),
     2px 2px 0 hsl(30, 12%, 10%);
+}
+.user {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  text-align: center;
+  transform: translateX(-50%);
+}
+#discordAvatar {
+  width: 50px;
 }
 .title {
   text-align: center;

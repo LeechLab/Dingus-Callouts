@@ -131,6 +131,13 @@ document.addEventListener("DOMContentLoaded", (e) => {
   guessImg.addEventListener("transitionstart", (e) => {
     go.play();
   });
+  function saveScore(mode, time) {
+    if (scores[mode] === null || time < scores[mode]) {
+      scores[mode] = time;
+
+      localStorage.setItem("scores", JSON.stringify(scores));
+    }
+  }
   const params = new URLSearchParams(window.location.search);
   const map = params.get("map");
   const mode = params.get("mode");
@@ -214,17 +221,7 @@ document.addEventListener("DOMContentLoaded", (e) => {
     }
     if (arr.length === 0) {
       //win
-      /*  async function submitTime(user, time) {
-  await fetch("/api/leaderboard", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: user.id, username: user.username, time }),
-  });
-
-  const res = await fetch("/api/leaderboard");
-  const data = await res.json();
-  console.log(data.leaderboard);
-} */
+      saveScore(map.substring(5, map.length - 4), percentage);
     }
   }
   texter.addEventListener("keydown", (e) => {

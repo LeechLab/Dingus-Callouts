@@ -75,27 +75,52 @@ start.addEventListener("click", () => {
   start.style.transform = "translateY(4000px)";
   disc.style.transform = "translateY(4000px)";
 });
+let username;
+let avatarHash;
+let userId;
+let avatarUrl;
 disc.addEventListener("click", () => {
   click.play();
   window.location.href =
     "https://discord.com/oauth2/authorize?client_id=1470213618720047145&redirect_uri=https://dingus-callouts.vercel.app%2Fapi%2Fcallback&response_type=code&scope=identify";
 });
-
-async function getUser(code) {
-  const res = await fetch(`/api/callback?code=${code}`);
-  const user = await res.json();
-  return user;
-}
-
-async function handleLogin() {
+(function handleDiscordLogin() {
   const params = new URLSearchParams(window.location.search);
-  const code = params.get("code");
-
-  if (code) {
-    const user = await getUser(code);
-    console.log(user);
+  const userData = params.get("user");
+  if (userData) {
+    const user = JSON.parse(decodeURIComponent(userData));
+    console.log("Discord user:", user);
+    localStorage.setItem("discordUser", JSON.stringify(user));
+    window.history.replaceState({}, document.title, "/");
+    username = user.username;
+    avatarHash = user.avatar;
+    userId = user.id;
+    avatarUrl = avatarHash
+      ? `https://cdn.discordapp.com/avatars/${userId}/${avatarHash}.png`
+      : `https://cdn.discordapp.com/embed/avatars/${parseInt(user.discriminator) % 5}.png`;
+    userIdGlobal = userId;
+    document.getElementById("discordAvatar").src = avatarUrl;
   }
-}
+})();
+let scores = JSON.parse(localStorage.getItem("scores")) || {
+  lab: 120,
+  bord: 120,
+  theme: 120,
+  bank: 120,
+  kafe: 120,
+  club: 120,
+  chal: 120,
+  fort: 120,
+  oreg: 120,
+  kanal: 120,
+  sky: 120,
+  outback: 120,
+  villa: 120,
+  lair: 120,
+  coast: 120,
+  cons: 120,
+  all: 120,
+};
 
 let choose = false;
 window.addEventListener("resize", () => {
