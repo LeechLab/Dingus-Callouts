@@ -1,9 +1,7 @@
 export default async function handler(req, res) {
   try {
     const code = req.query.code;
-    if (!code) return res.status(400).json({ error: "No code provided" });
-
-    // Exchange code for access token
+    if (!code) return res.status(400).send("No code provided");
     const tokenRes = await fetch("https://discord.com/api/oauth2/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -19,7 +17,7 @@ export default async function handler(req, res) {
     const tokenData = await tokenRes.json();
 
     if (!tokenData.access_token) {
-      return res.status(400).json({ error: "Failed to get access token" });
+      return res.status(400).send("Failed to get access token");
     }
     const userRes = await fetch("https://discord.com/api/users/@me", {
       headers: { Authorization: `Bearer ${tokenData.access_token}` },
@@ -27,9 +25,10 @@ export default async function handler(req, res) {
 
     const user = await userRes.json();
     const encodedUser = encodeURIComponent(JSON.stringify(user));
-    res.redirect(`/?user=${encodeURIComponent(JSON.stringify(user))}`);
+    res.writeHead(302, { Location: `/?user=${encodedUser}` });
+    res.end();
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Server crash", details: err.message });
+    res.status(500).send("Server crash: " + err.message);
   }
 }
