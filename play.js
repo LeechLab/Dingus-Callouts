@@ -334,7 +334,6 @@ document.addEventListener("DOMContentLoaded", (e) => {
       }
     }
     if (arr.length === 0) {
-      //win
       saveScore(map.substring(5, map.length - 4), percentage);
       savePublicScore(map.substring(5, map.length - 4), percentage);
     }
