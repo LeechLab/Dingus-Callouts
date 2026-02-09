@@ -67,6 +67,20 @@ document.addEventListener("DOMContentLoaded", (e) => {
     requestAnimationFrame(animate);
   }
   animateColor([121, 108, 92], [102, 94, 117], 1000);
+  const losingMessages = [
+    "Oops! You were too slow!",
+    "Better luck next time!",
+    "So close! Give it another shot!",
+    "Missed it! Try again!",
+    "Not quite there yet!",
+    "That round slipped away!",
+    "Almost had it! Keep going!",
+    "Timing was off! You'll get it next time!",
+    "Good try! Ready for another round?",
+    "That one got you! Don’t give up!",
+  ];
+  let randomLoss =
+    losingMessages[Math.floor(Math.random() * losingMessages.length)];
   const vol = localStorage.getItem("volume") || 1;
   const music = new Audio("audio/Nando Wando - Rush!.wav");
   music.volume = vol;
@@ -134,6 +148,8 @@ document.addEventListener("DOMContentLoaded", (e) => {
   guessImg.addEventListener("transitionstart", (e) => {
     go.play();
   });
+  let populate = false;
+  let leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
   let allScores = JSON.parse(localStorage.getItem("scores")) || {};
   let scores = userId
     ? allScores[userId] || {
@@ -176,12 +192,47 @@ document.addEventListener("DOMContentLoaded", (e) => {
       };
 
   function saveScore(mode, time) {
-    if (scores[mode] === null || time < scores[mode]) {
-      scores[mode] = time;
-      if (!userId) return;
-      allScores[userId] = scores;
-      localStorage.setItem("scores", JSON.stringify(allScores));
+    let leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
+
+    let existing = leaderboard.find(
+      (e) => e.userId === userId && e.mode === mode,
+    );
+
+    if (!existing || time < existing.time) {
+      leaderboard = leaderboard.filter(
+        (e) => !(e.userId === userId && e.mode === mode),
+      );
+
+      leaderboard.push({
+        userId: userId || "guest",
+        username: username || "Guest",
+        avatarUrl: avatarUrl || null,
+        mode,
+        time,
+      });
+
+      localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
     }
+  }
+  function savePublicScore(mode, time) {
+    fetch("/api/leaderboard", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId,
+        username,
+        avatarUrl,
+        mode,
+        time,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Leaderboard response:", data);
+      })
+      .catch((err) => console.error("Error posting score:", err));
   }
   const params = new URLSearchParams(window.location.search);
   const map = params.get("map");
@@ -262,17 +313,30 @@ document.addEventListener("DOMContentLoaded", (e) => {
       percentage.toFixed(2) +
       " seconds";
     if (percentage > 60) {
-      let area = document.getElementsByClassName("area");
-      for (var i = 0; i < area.length; i++) {
-        area[i].style.pointerEvents = "none";
-        area[i].readOnly = false;
-        area[i].style.transition = "opacity 1s ease";
-        area[i].style.opacity = "0";
+      if (!populate) {
+        let area = document.getElementsByClassName("area");
+        for (var i = 0; i < area.length; i++) {
+          area[i].style.pointerEvents = "none";
+          area[i].readOnly = false;
+          area[i].style.transition = "opacity 1s ease";
+          area[i].style.opacity = "0";
+        }
+        let area2 = document.getElementsByClassName("leaderboard");
+        for (var i = 0; i < area2.length; i++) {
+          area2[i].style.pointerEvents = "none";
+          area2[i].readOnly = false;
+          area2[i].style.transition = "opacity 1s ease";
+          area2[i].style.opacity = "1";
+        }
+        document.getElementById("oop").textContent = randomLoss;
+        populateLeaderboard();
+        populate = true;
       }
     }
     if (arr.length === 0) {
       //win
       saveScore(map.substring(5, map.length - 4), percentage);
+      savePublicScore(map.substring(5, map.length - 4), percentage);
     }
   }
   texter.addEventListener("keydown", (e) => {
@@ -450,3 +514,38 @@ document.addEventListener("DOMContentLoaded", (e) => {
   }
   animate();
 });
+async function populatePublicLeaderboard() {
+  const container = document.getElementById("leaderboardContainer");
+  if (!container) return;
+  container.innerHTML = "";
+
+  const res = await fetch("/api/leaderboard");
+  const data = await res.json();
+
+  data.sort((a, b) => a.time - b.time);
+
+  data.forEach((entry) => {
+    const row = document.createElement("div");
+    row.className = "leaderboardRow";
+
+    const avatar = document.createElement("img");
+    avatar.src = entry.avatarUrl || "images/default.png";
+    avatar.className = "pfp";
+
+    const name = document.createElement("span");
+    name.textContent = entry.username;
+
+    const score = document.createElement("span");
+    score.textContent = entry.time.toFixed(2) + "s";
+
+    const mode = document.createElement("span");
+    mode.textContent = entry.mode;
+
+    row.appendChild(avatar);
+    row.appendChild(name);
+    row.appendChild(score);
+    row.appendChild(mode);
+
+    container.appendChild(row);
+  });
+}

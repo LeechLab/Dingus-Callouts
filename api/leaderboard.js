@@ -1,22 +1,65 @@
-let leaderboard = [];
+import fs from "fs";
+import path from "path";
 
-export default async function handler(req, res) {
+const filePath = path.join(process.cwd(), "leaderboard.json");
+
+// Helper: read leaderboard
+function readLeaderboard() {
+  try {
+    const data = fs.readFileSync(filePath, "utf8");
+    return JSON.parse(data);
+  } catch (e) {
+    return [];
+  }
+}
+
+// Helper: write leaderboard
+function writeLeaderboard(data) {
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+}
+
+export default function handler(req, res) {
+  if (req.method === "GET") {
+    // Serve the public leaderboard
+    const leaderboard = readLeaderboard();
+    return res.status(200).json(leaderboard);
+  }
+
   if (req.method === "POST") {
-    const { id, username, time } = req.body;
+    const { userId, username, avatarUrl, mode, time } = req.body;
 
-    // Save or update user time
-    const existing = leaderboard.find((u) => u.id === id);
-    if (existing) {
-      if (time < existing.time) existing.time = time; // Only save best time
-    } else {
-      leaderboard.push({ id, username, time });
+    if (!mode || typeof time !== "number") {
+      return res.status(400).json({ error: "Missing fields" });
     }
 
-    leaderboard.sort((a, b) => a.time - b.time); // Sort by fastest
-    res.status(200).json({ leaderboard });
-  } else if (req.method === "GET") {
-    res.status(200).json({ leaderboard });
-  } else {
-    res.status(405).send("Method Not Allowed");
+    const leaderboard = readLeaderboard();
+
+    const existing = leaderboard.find(
+      (e) => e.userId === userId && e.mode === mode,
+    );
+
+    if (!existing || time < existing.time) {
+      const filtered = leaderboard.filter(
+        (e) => !(e.userId === userId && e.mode === mode),
+      );
+
+      filtered.push({
+        userId: userId || "guest-" + Math.random().toString(36).substr(2, 6),
+        username: username || "Guest",
+        avatarUrl: avatarUrl || null,
+        mode,
+        time,
+      });
+
+      writeLeaderboard(filtered);
+
+      return res.status(200).json({ success: true });
+    }
+
+    return res
+      .status(200)
+      .json({ success: false, message: "Score not improved" });
   }
+
+  res.status(405).json({ error: "Method not allowed" });
 }

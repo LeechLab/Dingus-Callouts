@@ -116,7 +116,7 @@ disc.addEventListener("click", () => {
       : `https://cdn.discordapp.com/embed/avatars/${parseInt(user.discriminator) % 5}.png`;
     userIdGlobal = userId;
     document.getElementById("discordAvatar").src = avatarUrl;
-    document.getElementById("username").src = username;
+    document.getElementById("username").innerText = username;
     localStorage.setItem("userId", userId);
     localStorage.setItem("username", username);
     localStorage.setItem("avatarUrl", avatarUrl);

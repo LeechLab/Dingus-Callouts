@@ -7,12 +7,12 @@
     <link rel="icon" type="image/png" href="images/favicon.png" />
     <link rel="stylesheet" href="play.css" />
   </head>
-  <body class="area">
+  <body>
     <canvas
       id="dotCanvas"
       style="position: fixed; top: 0; left: 0; z-index: -1"
     ></canvas>
-    <div>
+    <div class="area">
       <div>
         <img src="images/three.png" id="number" alt="number" width="1000px" />
         <button type="button" id="skip">Skip</button>
@@ -79,6 +79,10 @@
         </div>
       </div>
       <script src="play.js"></script>
+    </div>
+    <div class="leaderboard">
+      <div id="oop">Oops! You were too slow!</div>
+      <div id="leaderboardContainer"></div>
     </div>
   </body>
 </html>
