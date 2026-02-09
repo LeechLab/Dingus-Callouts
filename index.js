@@ -77,8 +77,8 @@ start.addEventListener("click", () => {
 });
 disc.addEventListener("click", () => {
   click.play();
-  /*window.location.href =
-    "https://discord.com/oauth2/authorize?client_id=1470213618720047145&redirect_uri=https://dingus-callouts.vercel.app%2Fapi%2Fcallback&response_type=code&scope=identify";*/
+  window.location.href =
+    "https://discord.com/oauth2/authorize?client_id=1470213618720047145&redirect_uri=https://dingus-callouts.vercel.app%2Fapi%2Fcallback&response_type=code&scope=identify";
 });
 
 async function getUser(code) {
@@ -87,12 +87,14 @@ async function getUser(code) {
   return user;
 }
 
-// After login redirect
-const params = new URLSearchParams(window.location.search);
-const code = params.get("code");
-if (code) {
-  const user = await getUser(code);
-  console.log(user); // { id, username, discriminator, avatar }
+async function handleLogin() {
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get("code");
+
+  if (code) {
+    const user = await getUser(code);
+    console.log(user);
+  }
 }
 
 let choose = false;
