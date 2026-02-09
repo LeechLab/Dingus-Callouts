@@ -2,8 +2,8 @@ import fetch from "node-fetch";
 
 const token = process.env.GITHUB_TOKEN;
 const repo = process.env.GITHUB_REPO;
-const filePath = "leaderboard.json"; // path in your repo
-const branch = "main"; // or your default branch
+const filePath = "leaderboard.json"; 
+const branch = "main";
 
 async function getFile() {
   const res = await fetch(
