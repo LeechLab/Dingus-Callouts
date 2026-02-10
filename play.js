@@ -259,6 +259,7 @@ document.addEventListener("DOMContentLoaded", (e) => {
   const tag = document.getElementById("tags");
   let percentage = 0;
   function handleCountdownComplete() {
+    if (arr.length === 0) return;
     document.getElementById("skip").style.opacity = 1;
     document.getElementById("report").style.opacity = 1;
     texter.value = "";
@@ -348,6 +349,7 @@ document.addEventListener("DOMContentLoaded", (e) => {
       e.preventDefault();
       if (texter.placeholder == "Press Enter") {
         arr.splice(current, 1);
+        if (arr.length === 0) return;
         texter.value = "";
         texter.focus();
         tag.style.filter = "blur(10px)";
@@ -408,10 +410,14 @@ document.addEventListener("DOMContentLoaded", (e) => {
     if (texter.placeholder == "Press Enter") {
       percentage += 10;
       arr.splice(current, 1);
+
+      if (arr.length === 0) return;
+
       texter.value = "";
       texter.focus();
       tag.style.filter = "blur(10px)";
       texter.placeholder = "type guess here";
+
       current = Math.floor(Math.random() * arr.length);
       guessImg.src = arr[current][0];
       guessImg.onload = () => {
