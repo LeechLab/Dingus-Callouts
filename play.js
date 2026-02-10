@@ -443,6 +443,7 @@ document.addEventListener("DOMContentLoaded", (e) => {
     prepareReload();
   });
   document.getElementById("home").addEventListener("click", (e) => {
+    localStorage.setItem("musictime", 0);
     window.location.href = "index.html";
   });
   document.getElementById("skip").addEventListener("click", (e) => {

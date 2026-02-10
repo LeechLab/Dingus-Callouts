@@ -414,8 +414,8 @@ for (let i = 0; i < 100; i++) {
 }
 for (i = 0; i < maps.length; i++) {
   const el = maps[i];
-  el.style.width = "18%";
-  el.style.height = "18%";
+  el.style.width = "13%";
+  el.style.height = "13%";
   el.style.padding = "10px";
   el.style.opacity = 0;
   el.style.transform = "scale(20)";
@@ -432,8 +432,8 @@ function animate() {
     tick1 = -1;
     for (i = 0; i < maps.length; i++) {
       const el = maps[i];
-      el.style.width = "18%";
-      el.style.height = "18%";
+      el.style.width = "13%";
+      el.style.height = "13%";
       el.style.padding = "10px";
       el.style.opacity = 0;
       el.style.transform = "scale(20)";
