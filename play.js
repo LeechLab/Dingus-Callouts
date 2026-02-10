@@ -214,25 +214,18 @@ document.addEventListener("DOMContentLoaded", (e) => {
       localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
     }
   }
-  function savePublicScore(mode, time) {
-    fetch("/api/leaderboard", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        userId,
-        username,
-        avatarUrl,
-        mode,
-        time,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Leaderboard response:", data);
-      })
-      .catch((err) => console.error("Error posting score:", err));
+  async function savePublicScore(mode, time) {
+    try {
+      const res = await fetch("/api/leaderboard", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, username, avatarUrl, mode, time }),
+      });
+      const data = await res.json();
+      console.log("Leaderboard update:", data);
+    } catch (e) {
+      console.error(e);
+    }
   }
   const params = new URLSearchParams(window.location.search);
   const map = params.get("map");
