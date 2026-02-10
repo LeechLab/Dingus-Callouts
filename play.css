@@ -322,6 +322,7 @@ textarea {
   text-align: left;
   border-color: #5831a1;
   border-radius: 5px;
+  pointer-events: auto;
 }
 #best + label {
   cursor: pointer;
