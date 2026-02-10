@@ -1,3 +1,9 @@
+const vol = localStorage.getItem("volume") || 1;
+const music = new Audio("audio/Nando Wando - Rush!.wav");
+music.volume = vol;
+music.loop = true;
+music.currentTime = localStorage.getItem("musictime");
+music.play();
 const whitelist = [
   "fatty balc",
   "ninety hallway",
@@ -79,13 +85,26 @@ document.addEventListener("DOMContentLoaded", (e) => {
     "Good try! Ready for another round?",
     "That one got you! Don’t give up!",
   ];
+  const winningMessages = [
+    "Clean execution!",
+    "Flawless callouts!",
+    "Great job!",
+    "Textbook performance!",
+    "That was surgical!",
+    "Perfect identification.",
+    "You’re locked in!",
+    "Callout mastery!",
+    "Zero hesitation. Nice!",
+    "That was crisp!",
+  ];
   let randomLoss =
     losingMessages[Math.floor(Math.random() * losingMessages.length)];
-  const vol = localStorage.getItem("volume") || 1;
-  const music = new Audio("audio/Nando Wando - Rush!.wav");
-  music.volume = vol;
-  music.loop = true;
-  music.play();
+  let randomWin =
+    winningMessages[Math.floor(Math.random() * winningMessages.length)];
+  function prepareReload() {
+    localStorage.setItem("musictime", music.currentTime);
+    window.location.reload();
+  }
   const countdownSfx = new Audio("audio/countdown.wav");
   const fine = new Audio("audio/fine.mp3");
   const bad = new Audio("audio/bad.mp3");
@@ -307,13 +326,6 @@ document.addEventListener("DOMContentLoaded", (e) => {
   }
   bar.style.width = "0px";
   function tick() {
-    bar.style.width = Math.round(percentage * 18.3333333) + "px";
-    percentage += 0.015;
-    whatsLeft.textContent =
-      arr.length +
-      " left.\n Current score: " +
-      percentage.toFixed(2) +
-      " seconds";
     if (percentage > 60) {
       if (!populate) {
         let area = document.getElementsByClassName("area");
@@ -334,14 +346,38 @@ document.addEventListener("DOMContentLoaded", (e) => {
         populateLeaderboard();
         populate = true;
       }
-    }
-    if (arr.length === 0) {
-      if (arr.length === 0 && !scoreSubmitted) {
+    } else if (arr.length === 0) {
+      if (!scoreSubmitted) {
         const gameMode = map.substring(5, map.length - 4);
         saveScore(gameMode, percentage);
         savePublicScore(gameMode, percentage);
         scoreSubmitted = true;
+        let area = document.getElementsByClassName("area");
+        for (var i = 0; i < area.length; i++) {
+          area[i].style.pointerEvents = "none";
+          area[i].readOnly = false;
+          area[i].style.transition = "opacity 1s ease";
+          area[i].style.opacity = "0";
+        }
+        let area2 = document.getElementsByClassName("leaderboard");
+        for (var i = 0; i < area2.length; i++) {
+          area2[i].style.pointerEvents = "none";
+          area2[i].readOnly = false;
+          area2[i].style.transition = "opacity 1s ease";
+          area2[i].style.opacity = "1";
+        }
+        document.getElementById("oop").textContent = randomWin;
+        populateLeaderboard();
+        populate = true;
       }
+    } else {
+      bar.style.width = Math.round(percentage * 18.3333333) + "px";
+      percentage += 0.015;
+      whatsLeft.textContent =
+        arr.length +
+        " left.\n Current score: " +
+        percentage.toFixed(2) +
+        " seconds";
     }
   }
   texter.addEventListener("keydown", (e) => {
@@ -402,6 +438,12 @@ document.addEventListener("DOMContentLoaded", (e) => {
       }
       texter.value = "";
     }
+  });
+  document.getElementById("restart").addEventListener("click", (e) => {
+    prepareReload();
+  });
+  document.getElementById("home").addEventListener("click", (e) => {
+    window.location.href = "index.html";
   });
   document.getElementById("skip").addEventListener("click", (e) => {
     const click1 = new Audio("audio/bad.mp3");
@@ -528,33 +570,42 @@ async function populateLeaderboard() {
   const container = document.getElementById("leaderboardContainer");
   if (!container) return;
   container.innerHTML = "";
-
   const res = await fetch("/api/leaderboard");
   const data = await res.json();
-  data.sort((a, b) => a.time - b.time);
+  const currentMode = map.substring(5, map.length - 4);
 
-  data.forEach((entry) => {
-    const row = document.createElement("div");
-    row.className = "leaderboardRow";
-
-    const avatar = document.createElement("img");
-    avatar.src = entry.avatarUrl || "images/default.png";
-    avatar.className = "pfp";
-
-    const name = document.createElement("span");
-    name.textContent = entry.username;
-
-    const score = document.createElement("span");
-    score.textContent = entry.time.toFixed(2) + "s";
-
-    const mode = document.createElement("span");
-    mode.textContent = entry.mode;
-
-    row.appendChild(avatar);
-    row.appendChild(name);
-    row.appendChild(score);
-    row.appendChild(mode);
-
-    container.appendChild(row);
+  const filtered = data
+    .filter((entry) => entry.mode === currentMode)
+    .sort((a, b) => a.time - b.time);
+  const len = filtered.length;
+  filtered.forEach((entry, index) => {
+    if (entry.mode == map.substring(5, map.length - 4)) {
+      const rank = document.createElement("span");
+      if (len > 3 && index + 1 == len) {
+        rank.textContent = "Dingus";
+      } else {
+        rank.textContent = "#" + (index + 1);
+      }
+      const row = document.createElement("div");
+      const info = document.createElement("div");
+      info.className = "playerInfo";
+      row.className = "leaderboardRow";
+      const avatar = document.createElement("img");
+      avatar.src = entry.avatarUrl || "images/default.png";
+      avatar.className = "pfp";
+      const name = document.createElement("span");
+      name.textContent = entry.username;
+      const score = document.createElement("span");
+      score.textContent = entry.time.toFixed(2) + "s";
+      //const mode = document.createElement("span");
+      //mode.textContent = entry.mode;
+      row.appendChild(rank);
+      info.appendChild(avatar);
+      info.appendChild(name);
+      row.appendChild(info);
+      row.appendChild(score);
+      // row.appendChild(mode);
+      container.appendChild(row);
+    }
   });
 }

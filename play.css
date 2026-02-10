@@ -85,6 +85,63 @@ h1 {
   background-color: #5831a1;
   color: #ffd166;
 }
+#home {
+  position: fixed;
+  bottom: 10px;
+  right: 25%;
+  padding: 20px 4%;
+  font-family: "Hippo";
+  font-size: 30px;
+  color: #f8f8f8;
+  background-color: rgba(0, 0, 0, 0);
+  border: 5px solid #5831a1;
+  border-radius: 10px;
+  cursor: pointer;
+  text-shadow:
+    -3px -3px 0 #5831a1,
+    3px -3px 0 #5831a1,
+    -3px 3px 0 #5831a1,
+    3px 3px 0 #5831a1;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+  z-index: 200;
+  background-color: #7655c7;
+  pointer-events: auto;
+}
+#home:hover {
+  background-color: #5831a1;
+  color: #ffd166;
+}
+#restart {
+  position: fixed;
+  bottom: 10px;
+  left: 25%;
+  padding: 20px 10%;
+  font-family: "Hippo";
+  font-size: 30px;
+  color: #f8f8f8;
+  background-color: rgba(0, 0, 0, 0);
+  border: 5px solid #5831a1;
+  border-radius: 10px;
+  cursor: pointer;
+  text-shadow:
+    -3px -3px 0 #5831a1,
+    3px -3px 0 #5831a1,
+    -3px 3px 0 #5831a1,
+    3px 3px 0 #5831a1;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+  z-index: 200;
+  background-color: #7655c7;
+  pointer-events: auto;
+}
+#restart:hover {
+  background-color: #5831a1;
+  color: #ffd166;
+}
+
 #report {
   opacity: 0;
   position: absolute;
@@ -355,10 +412,83 @@ textarea {
     -4px 4px 0 #5831a1,
     4px 4px 0 #5831a1;
   position: absolute;
-  top: 50%;
+  top: 25px;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 125%;
   text-align: center;
   cursor: none;
+}
+.leaderboardRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  padding: 12px 20px;
+  margin: 10px;
+
+  font-family: "Hippo";
+  font-size: 22px;
+  color: #f8f8f8;
+
+  text-shadow:
+    -3px -3px 0 #5831a1,
+    3px -3px 0 #5831a1,
+    -3px 3px 0 #5831a1,
+    3px 3px 0 #5831a1;
+
+  background: rgba(0, 0, 0, 0.25);
+  border: 5px solid #5831a1;
+  border-radius: 15px;
+
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
+}
+#leaderboardContainer {
+  pointer-events: all;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  position: fixed;
+  left: 50%;
+  top: 15%;
+  width: 80%;
+  height: 75%;
+  transform: translateX(-50%);
+
+  border: 15px solid #5831a1;
+  border-radius: 20px;
+
+  padding: 15px;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(8px);
+  scrollbar-width: thin;
+  scrollbar-color: #ffd166 #5831a1;
+}
+.leaderboardRow img {
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+.leaderboardRow span {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+.leaderboardRow:hover {
+  transform: scale(1.02);
+  background-color: rgba(0, 0, 0, 0.4);
+}
+.playerInfo {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.rank {
+  font-size: 28px;
+  min-width: 60px;
+  text-align: center;
 }
