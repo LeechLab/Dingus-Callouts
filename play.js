@@ -429,7 +429,7 @@ document.addEventListener("DOMContentLoaded", (e) => {
             percentage += 1.5;
             bad.play();
           } else {
-            percentage += 0.5;
+            percentage -= 0.5;
             fine.play();
           }
         } else {
